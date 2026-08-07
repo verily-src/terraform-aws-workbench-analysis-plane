@@ -1,0 +1,96 @@
+{
+  "type": "record",
+  "name": "EnvironmentModel",
+  "namespace": "bio.terra.aws.resource.discovery.avro",
+  "fields": [
+    {
+        "name": "app_instance_profile_name",
+        "type": ["null","string"],
+        "default": null
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "name": "EnvironmentMetadataModel",
+        "type": "record",
+        "fields":
+        [
+          {
+            "name": "tenant_alias",
+            "type": "string"
+          },
+          {
+            "name": "organization_id",
+            "type": "string"
+          },
+          {
+            "name": "environment_alias",
+            "type": "string"
+          },
+          {
+            "name": "account_id",
+            "type": "string"
+          },
+          {
+            "name": "region",
+            "type": "string"
+          },
+          {
+            "name": "major_version",
+            "type": "string"
+          },
+          {
+            "name": "tags",
+            "type":
+              {
+                "type": "map",
+                "values": "string"
+              }
+          }
+        ]
+      }
+    },
+    {
+      "name": "role_arn_app_instance",
+      "type": ["null","string"],
+      "default": null
+    },
+    {
+      "name": "role_arn_axon_server",
+      "type": "string"
+    },
+    {
+      "name": "role_arn_external_access",
+      "type": "string"
+    },
+    {
+      "name": "role_arn_terra_notebook",
+      "type": "string"
+    },
+    {
+      "name": "role_arn_terra_user",
+      "type": "string"
+    },
+    {
+      "name": "role_arn_terra_workspace_manager",
+      "type": "string"
+    },
+    {
+      "name": "role_arn_workflow_manager",
+      "type": "string"
+    },
+    {
+      "name": "role_arn_omics_user_delegate",
+      "type": "string"
+    },
+    {
+      "name": "policy_arn_omics_boundary",
+      "type": "string"
+    },
+    {
+      "name": "queue_url_omics",
+      "type": "string"
+    }
+  ]
+}
+

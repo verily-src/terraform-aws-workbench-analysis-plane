@@ -1,0 +1,194 @@
+{
+  "type": "record",
+  "name": "LandingZoneModel",
+  "namespace": "bio.terra.aws.resource.discovery.avro",
+  "fields": [
+    {
+      "name": "app_framework_private_subnet_id",
+      "type": ["null","string"],
+      "default": null
+    },
+    {
+      "name": "app_framework_private_subnet_ext_id",
+      "type": ["null","string"],
+      "default": null
+    },
+    {
+      "name": "app_framework_vpc_id",
+      "type": ["null","string"],
+      "default": null
+    },
+    {
+      "name": "app_framework_private_subnets_by_az",
+      "type": ["null", {
+        "type": "map",
+        "values": {
+          "type": "array",
+          "items": "string"
+        }
+      }],
+      "default": null
+    },
+    {
+      "name": "bucket_arn",
+      "type": "string"
+    },
+    {
+      "name": "bucket_id",
+      "type": "string"
+    },
+    {
+      "name": "kms_key_arn",
+      "type": "string"
+    },
+    {
+      "name": "kms_key_id",
+      "type": "string"
+    },
+    {
+      "name": "metadata",
+      "type": {
+        "name": "LandingZoneMetadataModel",
+        "type": "record",
+        "fields":
+        [
+          {
+            "name": "tenant_alias",
+            "type": "string"
+          },
+          {
+            "name": "organization_id",
+            "type": "string"
+          },
+          {
+            "name": "environment_alias",
+            "type": "string"
+          },
+          {
+            "name": "account_id",
+            "type": "string"
+          },
+          {
+            "name": "region",
+            "type": "string"
+          },
+          {
+            "name": "major_version",
+            "type": "string"
+          },
+          {
+            "name": "tags",
+            "type":
+            {
+              "type": "map",
+              "values": "string"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "notebook_lifecycle_configuration_arns",
+      "type": {
+        "type": "array",
+        "items": "string"
+      }
+    },
+    {
+      "name": "notebook_lifecycle_configuration_names",
+      "type": {
+        "type": "array",
+        "items": "string"
+      }
+    },
+    {
+      "name": "aurora_clusters",
+      "type": ["null", {
+        "type": "map",
+        "values": {
+          "name": "AuroraClusterModel",
+          "type": "record",
+          "fields": [
+            {
+              "name": "cluster_arn",
+              "type": "string"
+            },
+            {
+              "name": "cluster_resource_id",
+              "type": "string"
+            },
+            {
+              "name": "engine",
+              "type": "string"
+            },
+            {
+              "name": "engine_version",
+              "type": "string"
+            },
+            {
+              "name": "master_password_secret_arn",
+              "type": "string"
+            },
+            {
+              "name": "master_username",
+              "type": "string"
+            },
+            {
+              "name": "port",
+              "type": "int"
+            },
+            {
+              "name": "reader_endpoint",
+              "type": "string"
+            },
+            {
+              "name": "writer_endpoint",
+              "type": "string"
+            }
+          ]
+        }
+      }],
+      "default": null
+    },
+    {
+      "name": "efs_file_systems",
+      "type": ["null", {
+        "type": "map",
+        "values": {
+          "name": "EfsFilesystemsModel",
+          "type": "record",
+          "fields": [
+            {
+              "name": "file_system_id",
+              "type": "string"
+            },
+            {
+              "name": "file_system_arn",
+              "type": "string"
+            },
+            {
+              "name": "dns_name",
+              "type": "string"
+            },
+            {
+              "name": "mount_target_ids",
+              "type": {
+                "type": "array",
+                "items": "string"
+              }
+            },
+            {
+              "name": "performance_mode",
+              "type": "string"
+            },
+            {
+              "name": "throughput_mode",
+              "type": "string"
+            }
+          ]
+        }
+      }],
+      "default": null
+    }
+  ]
+}
