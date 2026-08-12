@@ -12,8 +12,11 @@ permissions:
 jobs:
   check-author:
     runs-on: ubuntu-latest
+    # Close PRs that originate from forks (i.e. external contributors). Org members with push
+    # access open branches on the main repo, so head.repo == base.repo for legitimate PRs.
+    # We avoid author_association because it returns NONE for private org members.
     if: |
-      !contains(fromJSON('["MEMBER", "OWNER", "COLLABORATOR"]'), github.event.pull_request.author_association) &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
       github.event.sender.login != 'workbench-releaser[bot]'
     steps:
       - name: Close PR if author is not authorized
