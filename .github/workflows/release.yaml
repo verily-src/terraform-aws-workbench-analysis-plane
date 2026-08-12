@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Tag and Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eo pipefail
+          commit_body="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}" --jq '.commit.message')"
+
+          # Use grep instead of git trailer parsing. Sometimes GitHub inserts
+          # separator (---) and breaks trailer parsing.
+          # Also `head -1` guards against malformed commits with duplicate keys.
+          version="$(echo "$commit_body" | grep -i '^Release-Version:' | head -1 | awk '{print $2}')"
+          if [[ -z "$version" ]]; then
+            echo "No Release-Version footer found, skipping release"
+            exit 0
+          fi
+
+          echo "Releasing version: $version"
+
+          # FIXME(ATLAS-9780): --latest will demote newer releases if a backport is ever published.
+          # Once backport support is added, compare semver against current latest and set --no-latest accordingly.
+          gh release create "${version}" \
+            --target "$GITHUB_SHA" \
+            --title "${version}" \
+            --latest \
+            --notes "See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/${version}/CHANGELOG.md) for full details."

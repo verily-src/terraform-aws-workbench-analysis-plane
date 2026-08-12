@@ -1,0 +1,31 @@
+name: Restrict PR Authors
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+
+permissions:
+  pull-requests: write
+
+jobs:
+  check-author:
+    runs-on: ubuntu-latest
+    if: |
+      !contains(fromJSON('["MEMBER", "OWNER", "COLLABORATOR"]'), github.event.pull_request.author_association) &&
+      github.event.sender.login != 'workbench-releaser[bot]'
+    steps:
+      - name: Close PR if author is not authorized
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+          COMMENT: |
+            Thank you for your interest in this project! This module repository is not open for code contributions. Pull requests from external contributors are automatically closed.
+
+            To report issues or request features, please contact your Workbench support team.
+        run: |
+          gh pr close "$PR_NUMBER" \
+            --repo "$REPO" \
+            --comment "$COMMENT"
