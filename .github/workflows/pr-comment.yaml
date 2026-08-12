@@ -1,0 +1,32 @@
+name: PR Comment
+
+on:
+  pull_request:
+    types:
+      - opened
+
+permissions:
+  pull-requests: write
+
+jobs:
+  release-checklist:
+    # Assume we always release via copybara and it open PR under `copybara/*` branch
+    if: startsWith(github.head_ref, 'copybara/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment release checklist
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            #### 🚀 Release PR Checklist
+
+            Merging this PR will create a public release of the Terraform module. Before merging, please confirm:
+
+            - [ ] The version bump is correct
+            - [ ] CHANGELOG entries are clear and readable
+            - [ ] The PR description contains both `Release-Version` and `GitOrigin-RevId` footers (added by copybara)
+
+            When merging this PR:
+            - [ ] Use **squash merge** (not merge commit or rebase)
+            - [ ] Keep the PR body in the squash commit message. Both `Release-Version` and `GitOrigin-RevId` footers must be in the commit message.
