@@ -26,7 +26,7 @@ jobs:
           # Use grep instead of git trailer parsing. Sometimes GitHub inserts
           # separator (---) and breaks trailer parsing.
           # Also `head -1` guards against malformed commits with duplicate keys.
-          version="$(echo "$commit_body" | grep -i '^Release-Version:' | head -1 | awk '{print $2}')"
+          version="$(echo "$commit_body" | grep -i '^Release-Version:' | head -1 | awk '{print $2}' || true)"
           if [[ -z "$version" ]]; then
             echo "No Release-Version footer found, skipping release"
             exit 0
