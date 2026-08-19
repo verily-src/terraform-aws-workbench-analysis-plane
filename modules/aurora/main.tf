@@ -75,9 +75,10 @@ resource "aws_rds_cluster" "aurora" {
   # Enable IAM Database Authentication
   iam_database_authentication_enabled = var.iam_authentication_enabled
 
-  # Point-in-time recovery configuration
+  # MIGRATION ONLY! Use the config in restore_to_point_in_time and restore.tf for disaster recovery.
+  # This is used to migrate existing environments to new AP module usage
   dynamic "restore_to_point_in_time" {
-    for_each = var.restore_to_point_in_time != null ? [var.restore_to_point_in_time] : []
+    for_each = var.migrate_from_cluster != null ? [var.migrate_from_cluster] : []
     content {
       source_cluster_identifier  = restore_to_point_in_time.value.source_cluster_identifiers[var.region]
       restore_type               = restore_to_point_in_time.value.restore_type

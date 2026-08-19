@@ -26,6 +26,9 @@ module "workbench_analysis_plane" {
   # option features configuration
   features = local.features
 
+  # gcp oauth service account identifiers
+  gcp_oauth_accounts = var.gcp_oauth_accounts
+
   # resource protection
   enable_resource_protection = local.enable_resource_protection
 

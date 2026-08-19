@@ -107,10 +107,23 @@ variable "tags" {
   default     = {}
 }
 
+# MIGRATION ONLY!  Use the config in restore_to_point_in_time and restore.tf for disaster recovery.
+variable "migrate_from_cluster" {
+  description = "An optional configuration block to specify that the cluster should be created as a restore from a backup of another cluster."
+  type = object({
+    source_cluster_identifiers = map(string)
+    restore_type               = optional(string, "copy-on-write") # copy-on-write or full-copy
+    restore_to_time            = optional(string, null)            # RFC 3339 format, e.g., "2024-01-15T10:30:00Z"
+    use_latest_restorable_time = optional(bool, null)              # Set to true to use latest backup, leave null if using restore_to_time
+  })
+  default = null
+}
+
+# DISASTER RECOVERY
 variable "restore_to_point_in_time" {
   description = "An optional configuration block to specify that the cluster should be created as a restore from a backup of another cluster. If specified, must provide either restore_to_time or use_latest_restorable_time (not both). If not specified, the cluster will be created as a new cluster rather than a restore."
   type = object({
-    source_cluster_identifiers = map(string)
+    source_cluster_identifiers = optional(map(string), {})         # if blank, uses existing postgres ids to restore from
     restore_type               = optional(string, "copy-on-write") # copy-on-write or full-copy
     restore_to_time            = optional(string, null)            # RFC 3339 format, e.g., "2024-01-15T10:30:00Z"
     use_latest_restorable_time = optional(bool, null)              # Set to true to use latest backup, leave null if using restore_to_time

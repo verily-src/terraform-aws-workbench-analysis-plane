@@ -33,6 +33,10 @@ variable "account_name" {
 variable "tenant" {
   description = "The tenant that this workbench is being deployed for. This is used for tagging and naming purposes."
   type        = string
+  validation {
+    condition     = length(var.tenant) <= 6
+    error_message = "tenant must be 6 characters or fewer."
+  }
 }
 
 variable "environment" {
@@ -48,6 +52,10 @@ variable "primary_region" {
   description = "The primary AWS region for the workbench. This is used for naming resources and for display purposes. It is also used as the default region for resources that do not have a region specified."
   type        = string
   default     = "us-east-1"
+  validation {
+    condition     = contains(["us-east-1", "us-west-1", "us-west-2", "eu-west-2"], var.primary_region)
+    error_message = "primary_region must be one of: us-east-1, us-west-1, us-west-2, eu-west-2."
+  }
 }
 
 variable "workbench_regions" {
@@ -59,6 +67,12 @@ variable "workbench_regions" {
     "us-west-2",
     "eu-west-2",
   ]
+  validation {
+    condition = alltrue([
+      for region in var.workbench_regions : contains(["us-east-1", "us-west-1", "us-west-2", "eu-west-2"], region)
+    ])
+    error_message = "workbench_regions may only contain a subset of: us-east-1, us-west-1, us-west-2, eu-west-2."
+  }
 }
 
 variable "max_availability_zones" {
@@ -101,56 +115,6 @@ variable "gcp_oauth_accounts" {
       })
     })
   }))
-  default = {
-    # common devel service accounts
-    devel = {
-      oauth = {
-        audience = "aws_terra_devel"
-        ids = {
-          workspace_manager = "103839170783841758891"
-          workflow_manager  = "116230365760589687692"
-          authnz            = "109779806118261264215"
-          axon_server       = "115222078872295738259"
-        }
-      }
-    }
-    # common dev service accounts
-    dev = {
-      oauth = {
-        audience = "aws_workbench_dev"
-        ids = {
-          workspace_manager = "114909651314496481017"
-          workflow_manager  = "102937181090438264814"
-          authnz            = "116303836342211387450"
-          axon_server       = "115222078872295738259"
-        }
-      }
-    }
-    # common test service accounts
-    test = {
-      oauth = {
-        audience = "aws_workbench_test"
-        ids = {
-          workspace_manager = "105660334668002635897"
-          workflow_manager  = "110770441947027683471"
-          authnz            = "109450723473110461688"
-          axon_server       = "112598271154440002464"
-        }
-      }
-    }
-    # common prod service accounts
-    prod = {
-      oauth = {
-        audience = "aws_workbench_prod"
-        ids = {
-          workspace_manager = "106070837874473815265"
-          workflow_manager  = "113928377999013167748"
-          authnz            = "104230373849889301972"
-          axon_server       = "103709590145107260341"
-        }
-      }
-    }
-  }
 }
 
 # --- tags ---

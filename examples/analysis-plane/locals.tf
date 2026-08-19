@@ -3,7 +3,7 @@ locals {
   account_name   = "<aws_account_name>" # replace with your AWS account name
   environment    = "<environment>"      # dev, stage, test, prod.
   system         = "workbench"          # DO NOT CHANGE THIS VALUE!
-  tenant         = "<tenant/teamname>"  # upto 5 characters, lowercase, no special characters
+  tenant         = "<tenant/teamname>"  # upto 6 characters, lowercase, no special characters
 
   # --- aws region (primary) ---
   # this defaults to us-east-1, but can be set to another region if desired.
