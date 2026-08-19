@@ -35,6 +35,9 @@ locals {
   # --- restore to point in time configuration
   # this sets the point-in-time recovery configuration for the aurora clusters.
   aurora_restore_to_point_in_time = try(local.aurora.restore_to_point_in_time, null)
+
+  # --- migrate aurora from an older cluster
+  aurora_migrate_from_cluster = try(local.aurora.migrate_from_cluster, null)
 }
 
 # --- modules ---
@@ -50,6 +53,7 @@ module "aurora_cluster" {
   aws_managed_password       = local.aurora_aws_managed_password
   iam_authentication_enabled = local.aurora_iam_authentication_enabled
   restore_to_point_in_time   = local.aurora_restore_to_point_in_time
+  migrate_from_cluster       = local.aurora_migrate_from_cluster
 
   # vpc
   vpc_id                   = module.vpc[each.value].vpc_id

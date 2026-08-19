@@ -27,6 +27,10 @@ locals {
   performance_insights_enabled          = true
   performance_insights_retention_period = 465 # 15 months, required for advanced mode
 
+  # --- restore point in time
+  # this gets set if restore_to_point_in_time is present in the aurora features block
+  restore_aurora = var.restore_to_point_in_time != null
+
   # --- tags
   # combine the user-provided tags with the default tags for all resources 
   # in this module.

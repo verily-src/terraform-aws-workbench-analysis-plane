@@ -486,3 +486,59 @@ enable_resource_protection = true
   }
   }
   ```
+
+--------------------------------------------------------------------------------
+
+## Disaster Recovery
+
+To restore Aurora PostgreSQL, a snapshot is restored to a new cluster. This process can be initiated by specifying the correct values under the `features.aurora_serverless.restore_to_point_in_time` key that is passed into the Analysis Plane Module.
+
+Example:
+
+hcl
+
+```
+features = {
+  aurora_serverless = {
+    enabled            = true
+    excluded_regions   = []
+    postgresql_version = "16.11"
+    restore_to_point_in_time = {
+      # optionally list the source_cluster_identifiers. If blank the current deployed clusters will be
+      # used as source_clusters in each region
+      #
+      # IMPORTANT: if you specify a single region, you MUST specify all regions where a cluster is to be restored!!
+      #
+      # source_cluster_identifiers = {
+      #   us-east-1 = "vwb-main-useast1-aurora-cluster"
+      #   us-west-2 = "vwb-main-uswest2-aurora-cluster"
+      # }
+      restore_type               = "full-copy"
+
+      # if you want a specific point in time, provide this value
+      restore_to_time            = "2026-01-23T19:00:00Z"
+
+      # if you want the latest snapshot to be restored, set this value to true
+      use_latest_restorable_time = false
+    }
+  }
+}
+```
+
+### Steps
+
+1. Supply the necessary values under the `features.aurora_serverless.restore_to_point_in_time` key in the locals.tf file for your environment.
+2. Apply the Terraform
+3. Validate the aurora cluster and instances, suffixed with `-restored` are created
+4. Validate the data
+5. Delete the original source cluster from each region that was restored
+6. From the AWS console rename the cluster and instances, dropping the `-restored` suffix
+7. Use `terraform state mv` to move the restored cluster into the terraform state for the original clusters
+8. Remove the `restore_to_point_in_time` block from the `features.aurora_serverless` key
+9. Run `terraform plan` and you should have no changes
+
+### NOTE
+
+The restored cluster(s) are not included in the Discovery AVRO payload. It is important to follow the steps above so not to get mismatches between the payload and the cluster being targetted!
+
+Typically, a restore operation would require quiescing the environment temporarily.

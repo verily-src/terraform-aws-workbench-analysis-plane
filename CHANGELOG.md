@@ -1,19 +1,47 @@
 # Changelog
 
+## 0.3.16 (2026-08-19)
+
+
+### Bug Fixes
+
+* Trigger analysis plane version build
+
+## 0.3.15 (2026-08-18)
+
+
+### Bug Fixes
+
+* Add aurora restore functionality
+
+## 0.3.14 (2026-08-14)
+
+
+### Bug Fixes
+
+* Fix permission for ci
+
+## 0.3.13 (2026-08-14)
+
+
+### Bug Fixes
+
+* Gcp service accounts variables
+
 ## 0.3.12 (2026-08-07)
 
 
 ### Bug Fixes
 
-* update terraform required version
-* use standard module structure for examples
+* Update terraform required version
+* Use standard module structure for examples
 
 ## 0.3.11 (2026-07-31)
 
 
 ### Bug Fixes
 
-* trigger build
+* Trigger build
 
 ## 0.3.10 (2026-07-31)
 
@@ -27,15 +55,15 @@
 
 ### Bug Fixes
 
-* expand avro with efs
+* Expand avro with efs
 
 ## 0.3.8 (2026-07-29)
 
 
 ### Bug Fixes
 
-* blank iam roles
-* output reference for discovery bucket name
+* Blank iam roles
+* Output reference for discovery bucket name
 
 ## 0.3.7 (2026-07-24)
 
@@ -50,83 +78,83 @@
 
 ### Bug Fixes
 
-* exclude tests from workflow
+* Exclude tests from workflow
 
 ## 0.3.5 (2026-07-22)
 
 
 ### Bug Fixes
 
-* update deployment docs
+* Update deployment docs
 
 ## 0.3.4 (2026-07-21)
 
 
 ### Bug Fixes
 
-* bucket permissions for app-instance role
+* Bucket permissions for app-instance role
 
 ## 0.3.3 (2026-07-20)
 
 
 ### Bug Fixes
 
-* kms policy for workspace user
+* Kms policy for workspace user
 
 ## 0.3.2 (2026-07-09)
 
 
 ### Bug Fixes
 
-* add aws resource protection flag
+* Add aws resource protection flag
 
 ## 0.3.1 (2026-06-23)
 
 
 ### Bug Fixes
 
-* use tfstate for integration tests
+* Use tfstate for integration tests
 
 ## 0.3.0 (2026-06-22)
 
 
 ### Features
 
-* add dns log bucket support
+* Add dns log bucket support
 
 
 ### Bug Fixes
 
-* allow set in enhanced VPC flow log
-* test
+* Allow set in enhanced VPC flow log
+* Test
 
 ## 0.2.1 (2026-05-22)
 
 
 ### Bug Fixes
 
-* update endpoint names
+* Update endpoint names
 
 ## 0.2.0 (2026-05-21)
 
 
 ### Features
 
-* disable s3 cors by default
+* Disable s3 cors by default
 
 ## 0.1.4 (2026-05-21)
 
 
 ### Bug Fixes
 
-* bump module version
+* Bump module version
 
 ## 0.1.3 (2026-05-21)
 
 
 ### Bug Fixes
 
-* add aurora restore option
+* Add aurora restore option
 
 ## 0.1.2 (2026-05-14)
 
@@ -140,17 +168,17 @@
 
 ### Bug Fixes
 
-* rename instance_id to deployment_id
+* Rename instance_id to deployment_id
 
 ## 0.1.0 (2026-05-13)
 
 
 ### Features
 
-* admin-proj
-* workbench analysis plane and byo bootstrap modules
+* Admin-proj
+* Workbench analysis plane and byo bootstrap modules
 
 
 ### Bug Fixes
 
-* tag for vwb-ap
+* Tag for vwb-ap

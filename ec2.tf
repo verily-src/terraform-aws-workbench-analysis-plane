@@ -1,7 +1,3 @@
-locals {
-
-}
-
 # --- modules ---
 
 module "ec2_iam" {
