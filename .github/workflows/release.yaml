@@ -37,6 +37,7 @@ jobs:
           # FIXME(ATLAS-9780): --latest will demote newer releases if a backport is ever published.
           # Once backport support is added, compare semver against current latest and set --no-latest accordingly.
           gh release create "${version}" \
+            -R "${GITHUB_REPOSITORY}" \
             --target "$GITHUB_SHA" \
             --title "${version}" \
             --latest \
