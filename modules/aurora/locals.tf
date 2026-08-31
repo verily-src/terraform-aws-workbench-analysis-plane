@@ -1,4 +1,8 @@
 locals {
+  # --- clusters
+  # this contains the entire configuration of all clusters for the given region
+  clusters = var.clusters
+
   # --- name prefix
   # name prefix for all resources in this module, to ensure consistent naming 
   # across all resources and to make it easier to identify which resources 
@@ -26,10 +30,6 @@ locals {
   # this sets the performance insights retention period for the aurora clusters, in days. The
   performance_insights_enabled          = true
   performance_insights_retention_period = 465 # 15 months, required for advanced mode
-
-  # --- restore point in time
-  # this gets set if restore_to_point_in_time is present in the aurora features block
-  restore_aurora = var.restore_to_point_in_time != null
 
   # --- tags
   # combine the user-provided tags with the default tags for all resources 

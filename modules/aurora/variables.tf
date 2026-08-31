@@ -6,6 +6,15 @@ variable "prefix" {
 variable "region" {
   description = "The AWS region to create the Aurora cluster in."
   type        = string
+  validation {
+    condition     = contains(var.workbench_regions, var.region)
+    error_message = "Aurora region must be one of the values in workbench_regions."
+  }
+}
+
+variable "workbench_regions" {
+  description = "A list of AWS regions where the Workbench resources will be deployed. This is used to determine which regions to create Aurora clusters in."
+  type        = list(string)
 }
 
 variable "resource_tags" {
@@ -107,28 +116,50 @@ variable "tags" {
   default     = {}
 }
 
-# MIGRATION ONLY!  Use the config in restore_to_point_in_time and restore.tf for disaster recovery.
-variable "migrate_from_cluster" {
-  description = "An optional configuration block to specify that the cluster should be created as a restore from a backup of another cluster."
-  type = object({
-    source_cluster_identifiers = map(string)
-    restore_type               = optional(string, "copy-on-write") # copy-on-write or full-copy
-    restore_to_time            = optional(string, null)            # RFC 3339 format, e.g., "2024-01-15T10:30:00Z"
-    use_latest_restorable_time = optional(bool, null)              # Set to true to use latest backup, leave null if using restore_to_time
-  })
-  default = null
-}
+# --- regional cluster block configuration ---
 
-# DISASTER RECOVERY
-variable "restore_to_point_in_time" {
-  description = "An optional configuration block to specify that the cluster should be created as a restore from a backup of another cluster. If specified, must provide either restore_to_time or use_latest_restorable_time (not both). If not specified, the cluster will be created as a new cluster rather than a restore."
-  type = object({
-    source_cluster_identifiers = optional(map(string), {})         # if blank, uses existing postgres ids to restore from
-    restore_type               = optional(string, "copy-on-write") # copy-on-write or full-copy
-    restore_to_time            = optional(string, null)            # RFC 3339 format, e.g., "2024-01-15T10:30:00Z"
-    use_latest_restorable_time = optional(bool, null)              # Set to true to use latest backup, leave null if using restore_to_time
-  })
-  default = null
+variable "clusters" {
+  type = map(object(
+    {
+      postgresql_version = optional(string, "16.11")
+
+      # Enable encryption at rest for the cluster
+      storage_encrypted = optional(bool, true)
+
+      # Scaling Options for Serverless v2
+      min_acu            = optional(number, 0)
+      max_acu            = optional(number, 256)
+      auto_pause_seconds = optional(number, 3600) # null = no auto-pause, or 300-86400 seconds (5 min - 24 hrs)
+
+      # Backup and Maintenance Options
+      backup_retention_period_days = optional(number, 10)
+      preferred_backup_window      = optional(string, "03:00-04:00")
+      preferred_maintenance_window = optional(string, "sun:04:30-sun:05:30")
+
+      # Deletion Protection - this helps prevent accidental deletion of the cluster by
+      # requiring two actions to delete: first disable deletion protection, then delete
+      # the cluster.  When disabling deletion protection, a final snapshot can be taken;
+      # set final_snapshot_identifier to a non-null string when disabling deletion
+      # protection to ensure a final snapshot is taken.
+      deletion_protection       = optional(bool, true)
+      final_snapshot_identifier = optional(string, null)
+
+      # Point-in-Time Recovery - restore from a backup of another cluster
+      # When specified, creates this cluster as a restore from the source cluster.
+      # Must provide EITHER restore_to_time OR use_latest_restorable_time (not both).
+      restore_to_point_in_time = optional(object({
+        source_cluster_identifier  = string
+        restore_type               = optional(string, "copy-on-write") # copy-on-write or full-copy
+        restore_to_time            = optional(string, null)            # RFC 3339 format, e.g., "2024-01-15T10:30:00Z"
+        use_latest_restorable_time = optional(bool, null)              # Set to true to use latest backup, leave null if using restore_to_time
+      }), null)
+
+      # Additional tags to add to the cluster
+      additional_tags = optional(map(string), {})
+    }
+  ))
+  description = "A map of Aurora cluster identifiers to be used by the landing zone."
+  default     = {}
 }
 
 # --- network variables ---

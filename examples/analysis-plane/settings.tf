@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.7.0"
+  required_version = ">= 1.9.0"
 
   backend "s3" {
     bucket = "<terraform_state_bucket_name>"
@@ -8,6 +8,13 @@ terraform {
 
     assume_role = {
       role_arn = "arn:aws:iam::<aws_account_id>:role/<deployment_role_name>"
+    }
+  }
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 5.0"
     }
   }
 }

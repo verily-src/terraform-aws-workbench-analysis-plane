@@ -1,7 +1,3 @@
-# --- data sources ---
-
-data "aws_caller_identity" "current" {}
-
 # --- modules ---
 
 module "workbench_analysis_plane" {

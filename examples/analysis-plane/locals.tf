@@ -2,7 +2,6 @@ locals {
   aws_account_id = "<aws_account_id>"   # replace with your AWS account ID
   account_name   = "<aws_account_name>" # replace with your AWS account name
   environment    = "<environment>"      # dev, stage, test, prod.
-  system         = "workbench"          # DO NOT CHANGE THIS VALUE!
   tenant         = "<tenant/teamname>"  # upto 6 characters, lowercase, no special characters
 
   # --- aws region (primary) ---
@@ -11,7 +10,7 @@ locals {
 
   # --- semantic version
   # this is used in the discovery payload and resource tagging.
-  semver_version = "v0.3.3" # update this when needed
+  semver_version = "v0.3.17" # update this when needed
 
   # --- deployment_id
   # this ID should be 'main' for the primary workbench environment. If additional analysis planes need to be created
@@ -42,11 +41,32 @@ locals {
   # --- analysis plane features
   # the excluded_regions lists can be used to specify regions where the respective feature should 
   # not be deployed.
+
+  # the aurora settings are specified per region and per cluster in a region. If you want to exclude
+  # deployment of aurora in a region, simply do not specify that region in the clusters map. 
+  # optionally, the postgresql_version can be specified per cluster, otherwise the global postgresql_version will be used.
   features = {
     aurora_serverless = {
       enabled            = true
       postgresql_version = "16.11"
-      excluded_regions   = []
+      clusters = {
+        us-east-1 = {
+          cluster-01 = { # identifier becomes vwb-main-useast1-aurora-cluster-01
+          }
+        }
+        us-west-1 = {
+          cluster-01 = { # identifier becomes vwb-main-uswest1-aurora-cluster-01
+          }
+        }
+        us-west-2 = {
+          cluster-01 = { # identifier becomes vwb-main-uswest2-aurora-cluster-01
+          }
+        }
+        eu-west-2 = {
+          cluster-01 = { # identifier becomes vwb-main-euwest2-aurora-cluster-01
+          }
+        }
+      }
     }
     ecr_endpoints = {
       enabled          = false

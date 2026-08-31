@@ -1,24 +1,24 @@
-# WARNING: this output is used by discovery. Do not change the structure
-output "clusters" {
-  value = {
-    (aws_rds_cluster.aurora.id) = {
-      # resource identifiers
-      cluster_arn         = aws_rds_cluster.aurora.arn
-      cluster_resource_id = aws_rds_cluster.aurora.cluster_resource_id
+output "aurora_clusters" {
+  value = length(var.clusters) > 0 ? {
+    for cluster in aws_rds_cluster.aurora :
+    (cluster.id) => {
+      # Connection endpoints
+      writer_endpoint = cluster.endpoint
+      reader_endpoint = cluster.reader_endpoint
+      port            = cluster.port
 
-      # engine info
-      engine         = aws_rds_cluster.aurora.engine
-      engine_version = aws_rds_cluster.aurora.engine_version
+      # Authentication
+      master_username            = cluster.master_username
+      master_password_secret_arn = cluster.master_user_secret[0].secret_arn
 
-      # connection endpoints
-      writer_endpoint = aws_rds_cluster.aurora.endpoint
-      reader_endpoint = aws_rds_cluster.aurora.reader_endpoint
-      port            = aws_rds_cluster.aurora.port
+      # Resource identifiers
+      cluster_arn         = cluster.arn
+      cluster_resource_id = cluster.cluster_resource_id
 
-      # authentication
-      master_username            = aws_rds_cluster.aurora.master_username
-      master_password_secret_arn = aws_rds_cluster.aurora.master_user_secret[0].secret_arn
+      # Engine info
+      engine         = cluster.engine
+      engine_version = cluster.engine_version
     }
-  }
+  } : { null = null }
   description = "WARNING: this output is used by discovery. Do not change the structure"
 }
