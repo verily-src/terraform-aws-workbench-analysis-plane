@@ -73,8 +73,8 @@ locals {
       notebook_lifecycle_configuration_arns  = module.sagemaker[region].notebook_lifecycle_configuration_arns
       notebook_lifecycle_configuration_names = module.sagemaker[region].notebook_lifecycle_configuration_names
 
-      aurora_clusters = contains(local.aurora_regions, region) ? {
-        map = module.aurora_cluster[region].clusters
+      aurora_clusters = can(module.aurora_cluster[region].aurora_clusters) ? {
+        map = module.aurora_cluster[region].aurora_clusters
         } : {
         "null" = null
       }

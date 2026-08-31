@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.18 (2026-08-31)
+
+
+### Bug Fixes
+
+* Test release flow
+
+## 0.3.17 (2026-08-21)
+
+
+### Bug Fixes
+
+* Enable aurora restore
+* Repair issue in aurora output for discovery
+
 ## 0.3.16 (2026-08-19)
 
 

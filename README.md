@@ -9,7 +9,7 @@
 
 | Name | Version |
 |------|---------|
-| terraform | >= 1.7.0 |
+| terraform | >= 1.9.0 |
 | aws | >= 4.45 |
 
 ## Inputs

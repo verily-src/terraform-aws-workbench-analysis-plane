@@ -19,7 +19,7 @@ The Workbench Analysis Plane module (`vwb-analysis-plane`) provides a comprehens
 
 ### Required Tools
 
-1. **Terraform** (>= 1.7.0)
+1. **Terraform** (>= 1.9.0)
 
 NOTE: The module has been tested with Terraform version 1.15.x and this version is supported.
 
@@ -188,7 +188,7 @@ NOTES:
 
 ```hcl
 terraform {
-  required_version = ">= 1.7.0"
+  required_version = ">= 1.9.0"
 
   backend "s3" {
     bucket = "<state-bucket-name>"
@@ -296,11 +296,30 @@ It is recommended to leave at least 2 regions enabled.
 
 Controls deployment of PostgreSQL database for Workspace Manager.
 
+The aurora settings are specified per region and per cluster in a region. If you want to exclude deployment of aurora in a region, simply do not specify that region in the clusters map. Optionally, the postgresql_version can be specified per cluster, otherwise the global postgresql_version will be used.
+
 ```hcl
 aurora_serverless = {
-  enabled            = true      # Enable/disable Aurora
-  postgresql_version = "16.11"   # PostgreSQL version
-  excluded_regions   = []        # Regions to skip (e.g., ["us-west-1"])
+  enabled            = true
+  postgresql_version = "16.11"
+  clusters = {
+    us-east-1 = {
+      cluster-01 = { # identifier becomes vwb-main-useast1-aurora-cluster-01
+      }
+    }
+    us-west-1 = {
+      cluster-01 = { # identifier becomes vwb-main-uswest1-aurora-cluster-01
+      }
+    }
+    us-west-2 = {
+      cluster-01 = { # identifier becomes vwb-main-uswest2-aurora-cluster-01
+      }
+    }
+    eu-west-2 = {
+      cluster-01 = { # identifier becomes vwb-main-euwest2-aurora-cluster-01
+      }
+    }
+  }
 }
 ```
 

@@ -62,11 +62,13 @@ resource "aws_rds_cluster_parameter_group" "aurora" {
 }
 
 resource "aws_rds_cluster" "aurora" {
-  cluster_identifier = "${local.prefix}-cluster"
+  for_each = local.clusters
+
+  cluster_identifier = "${local.prefix}-${each.key}"
   region             = var.region
   engine             = "aurora-postgresql"
   engine_mode        = "provisioned"
-  engine_version     = var.postgresql_version
+  engine_version     = try(each.value.postgresql_version, var.postgresql_version)
   master_username    = var.master_username
 
   # Let AWS manage the master password
@@ -75,12 +77,10 @@ resource "aws_rds_cluster" "aurora" {
   # Enable IAM Database Authentication
   iam_database_authentication_enabled = var.iam_authentication_enabled
 
-  # MIGRATION ONLY! Use the config in restore_to_point_in_time and restore.tf for disaster recovery.
-  # This is used to migrate existing environments to new AP module usage
   dynamic "restore_to_point_in_time" {
-    for_each = var.migrate_from_cluster != null ? [var.migrate_from_cluster] : []
+    for_each = each.value.restore_to_point_in_time != null ? [each.value.restore_to_point_in_time] : []
     content {
-      source_cluster_identifier  = restore_to_point_in_time.value.source_cluster_identifiers[var.region]
+      source_cluster_identifier  = restore_to_point_in_time.value.source_cluster_identifier
       restore_type               = restore_to_point_in_time.value.restore_type
       restore_to_time            = restore_to_point_in_time.value.restore_to_time
       use_latest_restorable_time = restore_to_point_in_time.value.use_latest_restorable_time == true ? true : null
@@ -98,9 +98,9 @@ resource "aws_rds_cluster" "aurora" {
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.aurora.name
 
   serverlessv2_scaling_configuration {
-    min_capacity             = var.min_acu
-    max_capacity             = var.max_acu
-    seconds_until_auto_pause = local.auto_pause_seconds
+    min_capacity             = try(each.value.min_acu, var.min_acu)
+    max_capacity             = try(each.value.max_acu, var.max_acu)
+    seconds_until_auto_pause = try(each.value.auto_pause_seconds, local.auto_pause_seconds)
   }
 
   # Metrics and Logging
@@ -112,32 +112,39 @@ resource "aws_rds_cluster" "aurora" {
   enabled_cloudwatch_logs_exports = ["postgresql"]
 
   # Backup and maintenance
-  backup_retention_period      = var.backup_retention_period_days
-  preferred_backup_window      = var.preferred_backup_window
-  preferred_maintenance_window = var.preferred_maintenance_window
+  backup_retention_period      = try(each.value.backup_retention_period_days, var.backup_retention_period_days)
+  preferred_backup_window      = try(each.value.preferred_backup_window, var.preferred_backup_window)
+  preferred_maintenance_window = try(each.value.preferred_maintenance_window, var.preferred_maintenance_window)
 
   # Cluster deletion settings
-  deletion_protection       = var.deletion_protection
+  deletion_protection       = try(each.value.deletion_protection, var.deletion_protection)
+  final_snapshot_identifier = try(each.value.final_snapshot_identifier, var.final_snapshot_identifier)
   skip_final_snapshot       = var.final_snapshot_identifier == null ? true : false
-  final_snapshot_identifier = var.final_snapshot_identifier
 
-  tags = merge(local.tags, { "Name" = "${local.prefix}-cluster" })
+  tags = merge(
+    local.tags,
+    { "Name" = "${local.prefix}-${each.key}" },
+    try(each.value.additional_tags, {})
+  )
 
   lifecycle {
     ignore_changes = [
-      engine_version
+      engine_version,
+      restore_to_point_in_time
     ]
   }
 }
 
 # Aurora Serverless v2 Instance
 resource "aws_rds_cluster_instance" "aurora" {
+  for_each = local.clusters
+
+  identifier         = "${local.prefix}-${each.key}-instance"
   region             = var.region
-  identifier         = "${local.prefix}-instance"
-  cluster_identifier = aws_rds_cluster.aurora.id
+  cluster_identifier = aws_rds_cluster.aurora[each.key].id
   instance_class     = "db.serverless"
-  engine             = aws_rds_cluster.aurora.engine
-  engine_version     = aws_rds_cluster.aurora.engine_version
+  engine             = aws_rds_cluster.aurora[each.key].engine
+  engine_version     = aws_rds_cluster.aurora[each.key].engine_version
 
   # Performance Insights is configured at cluster level, but needs to be enabled on instances too
   performance_insights_enabled          = local.performance_insights_enabled
@@ -146,5 +153,9 @@ resource "aws_rds_cluster_instance" "aurora" {
   # Make instance publicly accessible (or not)
   publicly_accessible = false
 
-  tags = merge(local.tags, { "Name" = "${local.prefix}-instance" })
+  tags = merge(
+    local.tags,
+    { "Name" = "${local.prefix}-${each.key}-instance" },
+    try(each.value.additional_tags, {})
+  )
 }
