@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.19 (2026-09-04)
+
+
+### Bug Fixes
+
+* Add doc for example
+* Fix link on Terraform registry
+
 ## 0.3.18 (2026-08-31)
 
 

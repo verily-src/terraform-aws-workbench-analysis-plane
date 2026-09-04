@@ -1,6 +1,6 @@
 # Workbench Analysis Plane Module
 
-📖 **[Deployment Guide](docs/DEPLOYMENT.md)** - Complete step-by-step deployment instructions
+📖 **[Deployment Guide](https://github.com/verily-src/terraform-aws-workbench-analysis-plane/blob/main/docs/DEPLOYMENT.md)** - Complete step-by-step deployment instructions
 
 ---
 
