@@ -36,20 +36,30 @@ locals {
     efs          = "WorkbenchManagedEFS"
   }
 
-  # --- tags
+  # --- default tags
   # default tags applied to all resources.
   tags = merge(
     var.tags,
     {
       AccountID                          = local.account_id
       DeploymentID                       = var.deployment_id
-      WorkbenchDiscovery                 = "true"
       ManagedBy                          = "Terraform"
       (local.resource_tags.version)      = local.major_version
       (local.resource_tags.account_name) = var.account_name
       (local.resource_tags.tenant)       = var.tenant
       (local.resource_tags.environment)  = var.environment
   })
+
+  # --- s3 object tags
+  # S3 object tags have to be limited. AWS does not allow more than 10 tags.
+  # Therefore, only include essential tags here to allow customer tags to be injected."
+  s3_object_tags = {
+    AccountID                          = local.account_id
+    (local.resource_tags.version)      = local.major_version
+    (local.resource_tags.account_name) = var.account_name
+    (local.resource_tags.environment)  = var.environment
+    (local.resource_tags.tenant)       = var.tenant
+  }
 
   # --- workflow tags
   # tags used for all workflow service resources.

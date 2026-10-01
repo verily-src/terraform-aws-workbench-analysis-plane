@@ -10,7 +10,7 @@
 | Name | Version |
 |------|---------|
 | terraform | >= 1.9.0 |
-| aws | >= 4.45 |
+| aws | >= 5.0 |
 
 ## Inputs
 
@@ -26,7 +26,7 @@
 | deployment\_id | The workbench id to use for naming resources. This should be unique across the organization. | `string` | `"main"` | no |
 | enable\_resource\_protection | Whether to enable resource protection for buckets e.a. resources | `bool` | `true` | no |
 | environment | The environment that this workbench is being deployed for. This is used for tagging and naming purposes. | `string` | n/a | yes |
-| features | A map of features to enable or disable for the workbench. Each feature can have its own set of variables and configurations. This is used to conditionally create resources based on the features that are enabled. | `any` | `{}` | no |
+| features | A map of features to enable or disable for the workbench. Each feature can have its own set of variables and configurations. This is used to conditionally create resources based on the features that are enabled. Every top-level feature key is optional, as are the fields within it; anything omitted falls back to the defaults declared below. | <pre>object({<br>    aurora_serverless = optional(object({<br>      enabled            = optional(bool, true)<br>      postgresql_version = optional(string, "16.13")<br>      master_username    = optional(string, "wbadmin")<br>      clusters = optional(map(map(any)), {<br>        us-east-1 = {<br>          cluster-01 = {} # identifier becomes vwb-main-useast1-aurora-cluster-01<br>        }<br>        us-west-1 = {<br>          cluster-01 = {} # identifier becomes vwb-main-uswest1-aurora-cluster-01<br>        }<br>        us-west-2 = {<br>          cluster-01 = {} # identifier becomes vwb-main-uswest2-aurora-cluster-01<br>        }<br>        eu-west-2 = {<br>          cluster-01 = {} # identifier becomes vwb-main-euwest2-aurora-cluster-01<br>        }<br>      })<br>    }), {})<br>    ecr_endpoints = optional(object({<br>      enabled          = optional(bool, false)<br>      excluded_regions = optional(list(string), [])<br>    }), {})<br>    s3_endpoints = optional(object({<br>      enabled          = optional(bool, true)<br>      excluded_regions = optional(list(string), [])<br>    }), {})<br>    omics = optional(object({<br>      enabled          = optional(bool, true)<br>      excluded_regions = optional(list(string), [])<br>    }), {})<br>    notebook = optional(object({<br>      enabled          = optional(bool, true)<br>      excluded_regions = optional(list(string), [])<br>    }), {})<br>    efs = optional(object({<br>      enabled          = optional(bool, false)<br>      filesystems      = optional(map(any), {})<br>      excluded_regions = optional(list(string), [])<br>    }), {})<br>  })</pre> | `{}` | no |
 | force\_destroy | Whether to force destroy the bucket when it is deleted. If true, all objects in the bucket will be deleted when the bucket is destroyed. Use with caution. | `bool` | `false` | no |
 | gcp\_oauth\_accounts | n/a | <pre>map(object({<br>    oauth = object({<br>      audience = string<br>      ids = object({<br>        authnz            = string<br>        axon_server       = string<br>        workspace_manager = string<br>        workflow_manager  = string<br>      })<br>    })<br>  }))</pre> | n/a | yes |
 | max\_availability\_zones | The maximum number of availability zones to use for the workbench resources. | `string` | `"max"` | no |
