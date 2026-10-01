@@ -121,7 +121,7 @@ variable "tags" {
 variable "clusters" {
   type = map(object(
     {
-      postgresql_version = optional(string, "16.11")
+      postgresql_version = optional(string, null)
 
       # Enable encryption at rest for the cluster
       storage_encrypted = optional(bool, true)

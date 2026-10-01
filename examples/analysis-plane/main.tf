@@ -14,12 +14,6 @@ module "workbench_analysis_plane" {
   # semver for tagging and discovery
   semver_version = local.semver_version
 
-  # workbench regions
-  workbench_regions = local.workbench_regions
-
-  # option features configuration
-  features = local.features
-
   # gcp oauth service account identifiers
   gcp_oauth_accounts = var.gcp_oauth_accounts
 

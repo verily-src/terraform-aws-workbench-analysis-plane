@@ -68,7 +68,7 @@ resource "aws_rds_cluster" "aurora" {
   region             = var.region
   engine             = "aurora-postgresql"
   engine_mode        = "provisioned"
-  engine_version     = try(each.value.postgresql_version, var.postgresql_version)
+  engine_version     = each.value.postgresql_version != null && each.value.postgresql_version != "" ? each.value.postgresql_version : var.postgresql_version
   master_username    = var.master_username
 
   # Let AWS manage the master password

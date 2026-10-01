@@ -21,7 +21,7 @@ locals {
 
   # --- postgresql version
   # this sets the major version number for the aurora postgres clusters
-  aurora_postgresql_version = try(local.aurora.postgresql_version, "16.11")
+  aurora_postgresql_version = try(local.aurora.postgresql_version, "16.13")
 
   # --- aws managed password 
   # this is always true for aurora serverless v2

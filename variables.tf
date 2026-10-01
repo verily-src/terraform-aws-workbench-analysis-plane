@@ -86,9 +86,50 @@ variable "max_availability_zones" {
 }
 
 variable "features" {
-  description = "A map of features to enable or disable for the workbench. Each feature can have its own set of variables and configurations. This is used to conditionally create resources based on the features that are enabled."
-  type        = any
-  default     = {}
+  description = "A map of features to enable or disable for the workbench. Each feature can have its own set of variables and configurations. This is used to conditionally create resources based on the features that are enabled. Every top-level feature key is optional, as are the fields within it; anything omitted falls back to the defaults declared below."
+  type = object({
+    aurora_serverless = optional(object({
+      enabled            = optional(bool, true)
+      postgresql_version = optional(string, "16.13")
+      master_username    = optional(string, "wbadmin")
+      clusters = optional(map(map(any)), {
+        us-east-1 = {
+          cluster-01 = {} # identifier becomes vwb-main-useast1-aurora-cluster-01
+        }
+        us-west-1 = {
+          cluster-01 = {} # identifier becomes vwb-main-uswest1-aurora-cluster-01
+        }
+        us-west-2 = {
+          cluster-01 = {} # identifier becomes vwb-main-uswest2-aurora-cluster-01
+        }
+        eu-west-2 = {
+          cluster-01 = {} # identifier becomes vwb-main-euwest2-aurora-cluster-01
+        }
+      })
+    }), {})
+    ecr_endpoints = optional(object({
+      enabled          = optional(bool, false)
+      excluded_regions = optional(list(string), [])
+    }), {})
+    s3_endpoints = optional(object({
+      enabled          = optional(bool, true)
+      excluded_regions = optional(list(string), [])
+    }), {})
+    omics = optional(object({
+      enabled          = optional(bool, true)
+      excluded_regions = optional(list(string), [])
+    }), {})
+    notebook = optional(object({
+      enabled          = optional(bool, true)
+      excluded_regions = optional(list(string), [])
+    }), {})
+    efs = optional(object({
+      enabled          = optional(bool, false)
+      filesystems      = optional(map(any), {})
+      excluded_regions = optional(list(string), [])
+    }), {})
+  })
+  default = {}
 }
 
 # --- inputs used for regression tests ---

@@ -116,7 +116,13 @@ resource "aws_s3_object" "environment" {
     "schema"  = base64encode(jsonencode(local.workbench_global_schema))
     "payload" = base64encode(jsonencode(local.workbench_global_payload))
   })
-  tags = local.tags
+
+  override_provider {
+    default_tags {
+      tags = {}
+    }
+  }
+  tags = local.s3_object_tags
 }
 
 resource "aws_s3_object" "landingzone" {
@@ -128,5 +134,11 @@ resource "aws_s3_object" "landingzone" {
     "schema"  = base64encode(jsonencode(local.workbench_regional_schema))
     "payload" = base64encode(jsonencode(local.workbench_regional_payload[each.key]))
   })
-  tags = local.tags
+
+  override_provider {
+    default_tags {
+      tags = {}
+    }
+  }
+  tags = local.s3_object_tags
 }

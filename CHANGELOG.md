@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.21 (2026-10-01)
+
+
+### Bug Fixes
+
+* Limit number of s3 object tags
+
+## 0.3.20 (2026-09-24)
+
+
+### Bug Fixes
+
+* Default deployment of aurora and omics
+
 ## 0.3.19 (2026-09-04)
 
 
